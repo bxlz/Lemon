@@ -30,10 +30,12 @@ Route::get('/', function () {
         return redirect('user/login');
     }
 });
+Route::get('tool/code', 'ToolController@captcha');
+Route::post('tool/captchaJudge','ToolController@captchaJudge');
 Route::group(['prefix' => 'user','namespace' => 'User'],function($route){
     $route->post('login','LoginController@login');
     $route->get('login', 'LoginController@showLoginForm');
-    $route->get('code','LoginController@code');
+    $route->get('home','HomeController@index');
 //    退出登录
     Route::get('logout','LoginController@logout');
 });

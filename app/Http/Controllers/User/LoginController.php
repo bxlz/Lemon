@@ -53,13 +53,13 @@ class LoginController extends Controller
         dd($data);
         return Validator::make($data, [
             'username' => 'required|max:255',
-            'password' => 'required|confirmed|min:6',
+            'password' => 'required|min:6',
         ]);
     }
 
     protected function validateLogin(Request $request)
     {
-        $this->validate($request->all(),[
+        $this->validate($request,[
             'username' => 'required',
             'password' => 'required',
             //'captcha' => 'required|captcha'
@@ -69,7 +69,6 @@ class LoginController extends Controller
             //'captcha.captcha' => '验证码错误',
             //'captcha.required' => '验证码必须',
         ]);
-        dd(132);
     }
 
     public function login(Request $request)

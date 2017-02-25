@@ -25,18 +25,21 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="code" class="col-md-4 control-label">验证码</label>
+                                <label for="password" class="col-md-4 control-label">验证码</label>
 
                                 <div class="col-md-6">
-                                    {{--<input type="text" class="code" name="code" class="form-control" >--}}
+                                    <input type="text" class="code" name="code" class="form-control" >
                                     <span><i class="fa fa-check-square-o"></i></span>
                                     <!-- 2.要点，src引入的是获取验证码的路由，做一个点击刷新的JS，并且后面带一个随机参数 -->
-                                    {{--<img src="{{url('/code')}}" alt="" onclick="this.src='{{url('/code')}}?'+Math.random()">--}}
+                                    <img src="{{url('tool/code')}}" alt="" onclick="this.src='{{url('tool/code')}}?'+Math.random()">
                                 </div>
                             </div>
                             <div class="form-group">
+                                <div class="alert alert-warning"></div>
+                            </div>
+                            <div class="form-group">
                                 <div class="col-md-6 col-md-offset-4">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="button" class="btn btn-primary" onclick="checkForm()">
                                         <i class="fa fa-btn fa-sign-in"></i> 登录
                                     </button>
 
@@ -49,3 +52,85 @@
         </div>
     </div>
 @endsection
+@yield('jquery')
+<script>
+    function checkForm(){
+        var data={
+            "formName":$("#username"),
+            "formPwd":$("#js_form_pwd")
+        }
+        var showTips=$(".alert");
+        var targetPage=$("form").attr("action");
+        var pwdReg="^[0-9A-Za-z]{6,12}$";
+        var captcha = $("#code").val();
+        function checkCap(captcha,data){
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                url: '../tool/captchaJudge',
+                data: {'cpt' : captcha},
+                headers: {
+                    'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                },
+                success: function(result) {
+                    if (result.status == 'false') {
+                        $("#captcha_img").attr('src','../tool/captcha?r=' + Math.random() );
+                        showTips.css("visibility","visible").removeClass("alert-warning").addClass("alert-danger").html("验证码错误");
+                        return false;
+                    } else {
+                        check(data);
+                    }
+                },
+
+                error: function(xhr, data) {
+
+                }
+            });
+        }
+
+        function check(data){
+            for(var keys in data){
+                if(data[keys][0] != undefined){
+                    if(data[keys].val() == null || data[keys].val()==""){
+                        showTips.removeClass().addClass("col-xs-12 m-t-15 alert alert-warning");
+                        showTips.css("visibility","visible");
+                        showTips.html("请"+data[keys].attr("placeholder"));
+                        data[keys].focus();
+                        return false;
+                    }else if(keys=="formPwd" && !data[keys].val().match(pwdReg)){
+                        showTips.css("visibility","visible").removeClass("alert-warning").addClass("alert-danger").html("格式错误，密码为6-12位数字加字母");
+                        return false;
+                    }
+                }
+            }
+            $('#form').submit();
+        }
+        checkCap(captcha,data);
+        // check(data);
+    }
+    function checkExist(username,password){
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: 'checkIfExist',
+            data: {'username' : username, 'password':password},
+            headers: {
+                'X-CSRF-TOKEN': $('input[name="_token"]').val()
+            },
+            success: function(result) {
+                if (result.status == 'false') {
+                    $("#captcha_img").attr('src','../tool/captcha?r=' + Math.random() );
+                    showTips.css("visibility","visible").removeClass("alert-warning").addClass("alert-danger").html("用户名或密码错误");
+                    return false;
+                } else {
+                    $('#login_button').val('正在登陆中...');
+                    $('#form').submit();
+                }
+            },
+
+            error: function(xhr, data) {
+
+            }
+        });
+    }
+</script>
