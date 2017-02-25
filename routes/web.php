@@ -17,13 +17,11 @@ Route::get('/', function () {
     //dd(0);
     return view('User.login');
 });
-
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');*/
 
 Route::get('/', function () {
-    //dd(Auth::guard('user')->check());
     if (Auth::guard('user')->check()) {
         return redirect('user/home');
     }else{
@@ -35,7 +33,13 @@ Route::post('tool/captchaJudge','ToolController@captchaJudge');
 Route::group(['prefix' => 'user','namespace' => 'User'],function($route){
     $route->post('login','LoginController@login');
     $route->get('login', 'LoginController@showLoginForm');
-    $route->get('home','HomeController@index');
-//    退出登录
-    Route::get('logout','LoginController@logout');
+    $route->post('checkIfExist', 'LoginController@checkIfExist');
+});
+Route::group(['prefix' => 'user','namespace' => 'User', 'middleware' => 'auth.user:user'],function ($router)
+{
+    //登出
+    $router->get('logout', 'LoginController@logout');
+    $router->post('logout', 'LoginController@logout');
+
+    $router->get('home', 'HomeController@index');
 });

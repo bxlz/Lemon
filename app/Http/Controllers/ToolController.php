@@ -25,22 +25,14 @@ class ToolController extends Controller {
     }
 
     public function captchaJudge(Request $request){
-        $captcha = ["cpt" =>Input::get('cpt')];
+        $captcha = $request['captcha'];
 
-        $rules = [
-            "cpt" => 'required|captcha'
-        ];
-        $messages = [
-            'cpt.required' => '请输入验证码',
-            'cpt.captcha' => '验证码错误，请重试'
-        ];
-
-        $validator = Validator::make($captcha, $rules, $messages);
-        //if ($validator->fails()) {
-         //   return response()->json(array('status' => 'false'));
-        //} else {
-            return response()->json(array('status' => 'true'));
-       // }
+//        if (!Captcha::check($captcha)) {
+//           return response()->json(array('status' => 'false'));
+//        } else {
+//            return response()->json(array('status' => 'true'));
+//        }
+        return response()->json(array('status' => 'true'));
     }
 
     public static function encrypt($lenght)

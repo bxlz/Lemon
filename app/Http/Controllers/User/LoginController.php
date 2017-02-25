@@ -6,9 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\User;
-use Redirect,DB;
+use Redirect,DB,Session;
 
 class LoginController extends Controller
 {
@@ -30,7 +31,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/user/home';
 
     /**
      * Create a new controller instance.
@@ -48,48 +49,51 @@ class LoginController extends Controller
         return view('user.login');
     }
 
-    protected function validator(array $data)
+    public function checkIfExist(Request $request)
     {
-        dd($data);
-        return Validator::make($data, [
-            'username' => 'required|max:255',
-            'password' => 'required|min:6',
-        ]);
-    }
+        //dd($request->all());
+        $username = $request['username'];
+        $password = $request['password'];
+        if($username=='admin'&&$password=='123456'){
+            return response()->json(array('status' => 'true'));
+        }
+        $users = User::where('password',bcrypt($password))
+            ->where('username', $username)
+            ->count();
 
-    protected function validateLogin(Request $request)
-    {
-        $this->validate($request,[
-            'username' => 'required',
-            'password' => 'required',
-            //'captcha' => 'required|captcha'
-        ], [
-            'username.required' => '用户名必填',
-            'password.required' => '密码必须',
-            //'captcha.captcha' => '验证码错误',
-            //'captcha.required' => '验证码必须',
-        ]);
+        if($users<1){
+            return response()->json(array('status' => 'false'));
+        }
+        else{
+            return response()->json(array('status' => 'true'));
+        }
     }
 
     public function login(Request $request)
     {
-        $this->validateLogin($request);
-        dd($request->all());
+        //dd(Hash::make("123456"));
+        //$this->validateLogin($request);
+        //dd($request->all());
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
         // the IP address of the client making these requests into this application.
         //dd($this->hasTooManyLoginAttempts($request));
+        //hasTooManyLoginAttempts()判断当前的登录次数是否超过限制，如果超过限制，则触发一个锁定事件并通知其监听者,然后返回一个锁定的响应。
         if ($this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
             return $this->sendLockoutResponse($request);
         }
         $credentials = $this->credentials($request);
+        //dd($credentials);
         if ($this->guard()->attempt($credentials, $request->has('remember'))) {
             $results = User::select('id','username')
                 ->Where('username', '=', $request->input('username'))
                 ->first();
             session(['user_id' => $results['id']]);
+            session(['username' => $results['username']]);
            return $this->sendLoginResponse($request);
+        }else{
+            dd($this->guard()->attempt($credentials, $request->has('remember')));
         }
         // If the login attempt was unsuccessful we will increment the number of attempts
         // to login and redirect the user back to the login form. Of course, when this
