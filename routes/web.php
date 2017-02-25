@@ -10,11 +10,30 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+use Illuminate\Support\Facades\Auth;
+/*
 Route::get('/', function () {
-    return view('welcome');
+    //return view('welcome');
+    //dd(0);
+    return view('User.login');
 });
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+Route::get('/home', 'HomeController@index');*/
+
+Route::get('/', function () {
+    //dd(Auth::guard('user')->check());
+    if (Auth::guard('user')->check()) {
+        return redirect('user/home');
+    }else{
+        return redirect('user/login');
+    }
+});
+Route::group(['prefix' => 'user','namespace' => 'User'],function($route){
+    $route->post('login','LoginController@login');
+    $route->get('login', 'LoginController@showLoginForm');
+    $route->get('code','LoginController@code');
+//    退出登录
+    Route::get('logout','LoginController@logout');
+});
