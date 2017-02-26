@@ -32,7 +32,7 @@ Route::get('tool/code', 'ToolController@captcha');
 Route::post('tool/captchaJudge','ToolController@captchaJudge');
 Route::group(['prefix' => 'user','namespace' => 'User'],function($route){
     $route->post('login','LoginController@login');
-    $route->get('login', 'LoginController@showLoginForm');
+    $route->get('login', 'LoginController@showLoginForm')->name('user.login');
     $route->post('checkIfExist', 'LoginController@checkIfExist');
 });
 Route::group(['prefix' => 'user','namespace' => 'User', 'middleware' => 'auth.user:user'],function ($router)
@@ -42,4 +42,7 @@ Route::group(['prefix' => 'user','namespace' => 'User', 'middleware' => 'auth.us
     $router->post('logout', 'LoginController@logout');
 
     $router->get('home', 'HomeController@index');
+    $router->get('user', 'UserController@index');
+    $router->post('editUser','UserController@editUser');
+    $router->post('deleteUser','UserController@deleteUser');
 });

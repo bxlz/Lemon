@@ -77,6 +77,7 @@
                 </div>
             </div>
         </nav>
+        @if(!Request::is('user/login'))
         <div class="container">
             <div class="row">
                 <div class="col-md-8 col-md-offset-2">
@@ -96,21 +97,22 @@
                                 @endif
 
                                 <div class="content">
-
                                     <div class="links">
-                                        <a href="{{'user/user'}}">用户管理</a>
-                                        <a href="{{'form/index'}}">创建表单</a>
-                                        <a href="https://laravel-news.com">表单列表</a>
-                                        <a href="https://forge.laravel.com">表单页面</a>
+                                        <a href="{{url('user/user')}}">用户管理</a>
+                                        <a href="{{url('form/index')}}">创建表单</a>
+                                        <a href="{{url('form/index')}}">表单列表</a>
                                     </div>
                                 </div>
+                                    @yield('content')
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        @yield('content')
+            @else
+            @yield('content')
+            @endif
     </div>
 
     <!-- Scripts -->
