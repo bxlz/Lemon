@@ -52,12 +52,13 @@ class LoginController extends Controller
     public function checkIfExist(Request $request)
     {
         //dd($request->all());
+        $encrypt = ToolController::encrypt(4);
         $username = $request['username'];
         $password = $request['password'];
-        if($username=='admin'&&$password=='123456'){
+        /*if($username=='admin'&&$password=='123456'){
             return response()->json(array('status' => 'true'));
-        }
-        $users = User::where('password',bcrypt($password))
+        }*/
+        $users = User::where('password',crypt($password, $encrypt))
             ->where('username', $username)
             ->count();
 
@@ -92,9 +93,10 @@ class LoginController extends Controller
             session(['user_id' => $results['id']]);
             session(['username' => $results['username']]);
            return $this->sendLoginResponse($request);
-        }else{
-            dd($this->guard()->attempt($credentials, $request->has('remember')));
-        }
+      }
+//else{
+//            dd($this->guard()->attempt($credentials, $request->has('remember')));
+//        }
         // If the login attempt was unsuccessful we will increment the number of attempts
         // to login and redirect the user back to the login form. Of course, when this
         // user surpasses their maximum number of attempts they will get locked out.

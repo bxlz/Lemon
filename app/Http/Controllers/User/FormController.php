@@ -24,19 +24,43 @@ class FormController extends Controller
         $radio_text = $request->input('radio_text');
         $radio_value = $request->input('radio_value');
         $form_title= $request->input('form_title');
-        $created_at =date('Y-m-d H:i:s');
-        $form_id = DB::table('forms')->insertGetId(['form_title'=>$form_title,
-        'user_id'=>session('user_id'),'created_at'=>$created_at]);
-        //dd($form_id);
-        if($element_type == 'text'){
-            DB::table('form_elements')->insert(['element_title'=>$element_title,
-                'element_name'=>$element_name,'element_type'=>1,'form_id'=>$form_id
-                ,'created_at'=>$created_at]);
+        $created_at = date('Y-m-d H:i:s');
+
+        $num = DB::table('forms')->where('form_title',$form_title)->where('user_id',session('user_id'))->first();
+
+        if(empty($num)) {
+            $form_id = DB::table('forms')->insertGetId(['form_title' => $form_title,
+                'user_id' => session('user_id'), 'created_at' => $created_at]);
+            //dd($form_id);
+            if ($element_type == 'text') {
+                DB::table('form_elements')->insert(['element_title' => $element_title,
+                    'element_name' => $element_name, 'element_type' => 1, 'form_id' => $form_id
+                    , 'created_at' => $created_at]);
+            } else {
+                $element_id = DB::table('form_elements')->insert(['element_title' => $element_title,
+                    'element_name' => $element_name, 'element_type' => 2, 'form_id' => $form_id, 'created_at' => $created_at]);
+                DB::table('radios')->insert(['radio_text' => $radio_text, 'radio_value' => $radio_value,
+                    'element_id' => $element_id, 'created_at' => $created_at]);
+            }
         }else{
-            $element_id = DB::table('form_elements')->insert(['element_title'=>$element_title,
-                'element_name'=>$element_name,'element_type'=>2,'form_id'=>$form_id,'created_at'=>$created_at]);
-            DB::table('radios')->insert(['radio_text'=>$radio_text,'radio_value'=>$radio_value,
-                'element_id'=>$element_id,'created_at'=>$created_at]);
+            if ($element_type == 'text') {
+                DB::table('form_elements')->insert(['element_title' => $element_title,
+                    'element_name' => $element_name, 'element_type' => 1, 'form_id' => $num->id
+                    , 'created_at' => $created_at]);
+            } else {
+                $one = DB::table('form_elements')->where('element_name',$element_name)->where('form_id',$num->id)
+                       ->first();
+                //dd($one);
+                if(empty($one)){
+                $element_id = DB::table('form_elements')->insert(['element_title' => $element_title,
+                    'element_name' => $element_name, 'element_type' => 2, 'form_id' => $num->id, 'created_at' => $created_at]);
+                DB::table('radios')->insert(['radio_text' => $radio_text, 'radio_value' => $radio_value,
+                    'element_id' => $element_id, 'created_at' => $created_at]);
+                }else{
+                    DB::table('radios')->insert(['radio_text' => $radio_text, 'radio_value' => $radio_value,
+                        'element_id' => $one->id, 'created_at' => $created_at]);
+                }
+            }
         }
         $data = array('result' => true);
         return json_encode($data);
@@ -67,18 +91,11 @@ class FormController extends Controller
             ->get();
             //dd($radio);
             foreach($radio->toArray() as $r) {
-                //dd($r->radio_value);
                 //dump($r->radio_text);
                 $data[$k]['type'][] = ['radio_text'=>$r->radio_text,'radio_value'=>$r->radio_value];
             }
             //dd($data);
         }
-//        if(count($radio->toArray()) == count($radio->toArray(),1)){
-//            dd("是一维");
-//        }else{
-//            dd("不是一维");
-//        }
-        //dd($data);
         return view('user.write',['info'=>$info,'text'=>$text,'data'=>$data]);
     }
 

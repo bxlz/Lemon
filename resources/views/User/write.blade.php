@@ -17,7 +17,11 @@
         <div class="form-group">
                 <label for="" class="control-label col-md-2"> {{$r['element_title']}}</label>
             @foreach($r['type'] as $v)
-                    <input name="{{$r['element_name']}}" type="radio" value="{{$v['radio_value']}}" checked="{{($v['radio_value'])==($r['element_value'])?'true':'false'}}"/>{{$v['radio_text']}}
+                @if($v['radio_value']==$r['element_value'])
+                    <input name="{{$r['element_name']}}" type="radio" value="{{$v['radio_value']}}" checked="checked"/>{{$v['radio_text']}}
+                @else
+                    <input name="{{$r['element_name']}}" type="radio" value="{{$v['radio_value']}}" />{{$v['radio_text']}}
+                @endif
                 @endforeach
         </div>
         @endforeach
