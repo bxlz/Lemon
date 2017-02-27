@@ -99,8 +99,8 @@
                                 <div class="content">
                                     <div class="links">
                                         <a href="{{url('user/user')}}">用户管理</a>
-                                        <a href="{{url('form/index')}}">创建表单</a>
-                                        <a href="{{url('form/index')}}">表单列表</a>
+                                        <a href="{{url('user/form')}}">创建表单</a>
+                                        <a href="{{url('user/list')}}">表单列表</a>
                                     </div>
                                 </div>
                                     @yield('content')

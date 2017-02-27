@@ -45,4 +45,10 @@ Route::group(['prefix' => 'user','namespace' => 'User', 'middleware' => 'auth.us
     $router->get('user', 'UserController@index');
     $router->post('editUser','UserController@editUser');
     $router->post('deleteUser','UserController@deleteUser');
+    $router->get('form', 'FormController@index');
+    $router->post('editForm', 'FormController@editForm');
+    $router->get('list', 'FormController@lists');
+    $router->get('write/{id}', 'FormController@write');
+    $router->post('saveForm', 'FormController@saveForm');
+    $router->get('detail/{id}', 'FormController@detail');
 });

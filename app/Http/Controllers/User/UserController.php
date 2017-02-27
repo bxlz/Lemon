@@ -12,7 +12,7 @@ class UserController extends Controller
 {
     public function index(){
         $allUserInfo = User::paginate(20);
-        return view('user/user',['allUserInfo'=>$allUserInfo]);
+        return view('user.user',['allUserInfo'=>$allUserInfo]);
     }
 
     //编辑新增用户
