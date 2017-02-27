@@ -7,17 +7,19 @@
             <input type="hidden" name="form_id" value="{{$info->id}}">
             <label for="" class="control-label col-md-2"> {{$info->form_title}}</label>
         </div>
-        <div class="form-group">
-            @foreach($text as $t)
+        @foreach($text as $t)
+            <div class="form-group">
                 <label for="" class="control-label col-md-2"> {{$t->element_title}}</label>
                 <input type="text" name="{{$t->element_name}}" value="{{$t->element_value}}">
-            @endforeach
-        </div>
-        <div class="form-group">
-            @foreach($radio as $r)
-                <label for="" class="control-label col-md-2"> {{$r->element_title}}</label>
-                <input name="{{$r->element_name}}" type="radio" value="{{$r->radio_value}}" />{{$r->radio_text}}
-            @endforeach
-        </div>
+            </div>
+        @endforeach
+        @foreach($data as $r)
+            <div class="form-group">
+                <label for="" class="control-label col-md-2"> {{$r['element_title']}}</label>
+                @foreach($r['type'] as $v)
+                    <input name="{{$r['element_name']}}" type="radio" value="{{$v['radio_value']}}" checked="{{($v['radio_value'])==($r['element_value'])?'true':'false'}}"/>{{$v['radio_text']}}
+                @endforeach
+            </div>
+        @endforeach
     </form>
 @endsection

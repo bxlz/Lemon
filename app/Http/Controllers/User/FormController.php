@@ -61,30 +61,25 @@ class FormController extends Controller
             ->where('form_id',$id)->get();
         $data = array();
         foreach($radio1->toArray() as $k=>$v){
-            $data[$k] = $v;
+            $data[$k] = json_decode(json_encode($v), true);
             $radio = DB::table('radios')
             ->where('element_id',$v->id)
             ->get();
-            dd($radio);
+            //dd($radio);
             foreach($radio->toArray() as $r) {
                 //dd($r->radio_value);
-                $data['radio_text'][$k] = $r->radio_text;
-                $data['radio_value'][$k] = $r->radio_value;
+                //dump($r->radio_text);
+                $data[$k]['type'][] = ['radio_text'=>$r->radio_text,'radio_value'=>$r->radio_value];
             }
-            dd($data);
+            //dd($data);
         }
-//        $radio = DB::table('form_elements as e')
-//            ->leftjoin('radios as r','e.id','=','r.element_id')
-//            ->where('element_type',2)
-//            ->where('form_id',$id)
-//            ->get();
 //        if(count($radio->toArray()) == count($radio->toArray(),1)){
 //            dd("是一维");
 //        }else{
 //            dd("不是一维");
 //        }
-        dd($data);
-        return view('user.write',['info'=>$info,'text'=>$text,'radio'=>$radio]);
+        //dd($data);
+        return view('user.write',['info'=>$info,'text'=>$text,'data'=>$data]);
     }
 
     public function saveForm(Request $request){
@@ -108,12 +103,25 @@ class FormController extends Controller
             ->where('element_type',1)
             ->where('form_id',$id)->get();
         //radio
-        $radio = DB::table('form_elements as e')
-            ->leftjoin('radios as r','e.id','=','r.element_id')
+        $radio1 = DB::table('form_elements')
             ->where('element_type',2)
             ->where('form_id',$id)->get();
+        $data = array();
+        foreach($radio1->toArray() as $k=>$v){
+            $data[$k] = json_decode(json_encode($v), true);
+            $radio = DB::table('radios')
+                ->where('element_id',$v->id)
+                ->get();
+            //dd($radio);
+            foreach($radio->toArray() as $r) {
+                //dd($r->radio_value);
+                //dump($r->radio_text);
+                $data[$k]['type'][] = ['radio_text'=>$r->radio_text,'radio_value'=>$r->radio_value];
+            }
+            //dd($data);
+        }
         //dd($radio);
-        return view('user.detail',['info'=>$info,'text'=>$text,'radio'=>$radio]);
+        return view('user.detail',['info'=>$info,'text'=>$text,'data'=>$data]);
     }
 
 
