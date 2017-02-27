@@ -64,11 +64,11 @@
         var pwdReg="^[0-9A-Za-z]{6,12}$";
         var captcha = $("#code").val();
         //alert(captcha);
-//        if(captcha==""){
-//            $("#code_img").attr('src','../tool/code?r=' + Math.random() );
-//            showTips.css("visibility","visible").removeClass("alert-warning").addClass("alert-danger").html("验证码必须填写");
-//            return false;
-//        }
+        if(captcha==""){
+            $("#code_img").attr('src','../tool/code?r=' + Math.random() );
+            showTips.css("visibility","visible").removeClass("alert-warning").addClass("alert-danger").html("验证码必须填写");
+            return false;
+        }
         function checkCap(captcha,data){
             $.ajax({
                 type: 'post',

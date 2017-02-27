@@ -27,31 +27,12 @@ class ToolController extends Controller {
     public function captchaJudge(Request $request){
         $captcha = $request['captcha'];
 
-//        if (!Captcha::check($captcha)) {
-//           return response()->json(array('status' => 'false'));
-//        } else {
-//            return response()->json(array('status' => 'true'));
-//        }
+        if (!Captcha::check($captcha)) {
+           return response()->json(array('status' => 'false'));
+        } else {
+            return response()->json(array('status' => 'true'));
+        }
         return response()->json(array('status' => 'true'));
-    }
-
-    public static function encrypt($lenght)
-    {
-        $chars = array( 
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",  
-        "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",  
-        "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G",  
-        "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",  
-        "S", "T", "U", "V", "W", "X", "Y", "Z"
-        ); 
-        $charsLen = count($chars) - 1; 
-        shuffle($chars);   
-        $output = ""; 
-        for ($i=0; $i<$lenght; $i++) 
-        { 
-            $output .= $chars[mt_rand(0, $charsLen)]; 
-        }  
-        return $output;
     }
 
 }

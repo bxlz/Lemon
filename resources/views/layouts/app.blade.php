@@ -48,14 +48,9 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
-                        <!-- Authentication Links -->
-                        {{--@if (Auth::guest())--}}
-                            {{--<li><a href="{{ url('user/login') }}">Login</a></li>--}}
-                        {{--@else--}}
-                        @if (!Auth::guest('user'))
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    {{ Auth::user()->username }} <span class="caret"></span>
+                                    {{ Session::get('username') }} <span class="caret"></span>
                                 </a>
 
                                 <ul class="dropdown-menu" role="menu">
@@ -66,13 +61,12 @@
                                             Logout
                                         </a>
 
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                        <form id="logout-form" action="{{ url('user/logout') }}" method="POST" style="display: none;">
                                             {{ csrf_field() }}
                                         </form>
                                     </li>
                                 </ul>
                             </li>
-                        @endif
                     </ul>
                 </div>
             </div>
@@ -86,9 +80,9 @@
 
                         <div class="panel-body">
                             <div class="flex-center position-ref full-height">
-                                @if (Route::has('login'))
+                                @if (Route::has('user/login'))
                                     <div class="top-right links">
-                                        @if (Auth::check(''))
+                                        @if (Auth::check('user'))
                                             <a href="{{ url('user/home') }}">Admin homepge</a>
                                         @else
                                             <a href="{{ url('user/login') }}">Login</a>

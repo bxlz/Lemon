@@ -5,7 +5,6 @@ namespace App\Http\Controllers\User;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\ToolController;
 use Illuminate\Support\Facades\Input;
 
 class UserController extends Controller
@@ -21,7 +20,6 @@ class UserController extends Controller
         $password = $request->input('password');
         $username = $request->input('username');
         $id = $request->input('id');
-        $encrypt = ToolController::encrypt(4);
         $user = new User();
         $num = $user->where('username',$username)->count();
         $one = $user->where('id',$id)->where('username',$username)->count();
@@ -33,7 +31,7 @@ class UserController extends Controller
                 return json_encode($data);
             }else {
                 $user->username = $username;
-                $user->password = crypt($password, $encrypt);
+                $user->password = bcrypt($password);
                 $user->save();
             }
         }
@@ -43,7 +41,7 @@ class UserController extends Controller
                 $data = array('result' => false);
                 return json_encode($data);
             }else{
-                $user->where('id', $id)->update(['username' => $username, 'password' => crypt($password, $encrypt)]);
+                $user->where('id', $id)->update(['username' => $username, 'password' => bcrypt($password)]);
             }
         }
 
