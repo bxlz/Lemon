@@ -17,10 +17,16 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
+//        if (Auth::guard($guard)->check()) {
+//            return redirect('user/home');
+//        }
         if (Auth::guard($guard)->check()) {
-            return redirect('/home');
+            // 根据不同 guard 跳转到不同的页面
+            if ($guard == "user") {
+                $url = $guard ? 'user/home' : 'user/login';
+            }
+            return redirect($url);
         }
-
         return $next($request);
     }
 }

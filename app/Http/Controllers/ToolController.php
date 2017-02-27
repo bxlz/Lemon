@@ -32,7 +32,7 @@ class ToolController extends Controller {
         } else {
             return response()->json(array('status' => 'true'));
         }
-        return response()->json(array('status' => 'true'));
+        //return response()->json(array('status' => 'true'));
     }
 
 }

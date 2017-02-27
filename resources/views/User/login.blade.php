@@ -114,6 +114,7 @@
             $('#form').submit();
         }
         function checkExist(username,password){
+            console.log(username,password);
             $.ajax({
                 type: 'post',
                 dataType: 'json',
